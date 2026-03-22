@@ -1,0 +1,54 @@
+% IMPORTANT! In order for the document to compile, one needs to use XeLaTeX or LuaLaTeX as compiler.
+% In Overleaf this can be done via Menu -> Settings -> Compiler -> Choose XeLaTeX/LuaLaTeX.
+\documentclass[12pt]{article}
+
+\input{preamble}
+
+% Front page metadata and optional illustration.
+\ptype{Assignment 4}
+\author{Christian Kristensen}
+\title{Cross-Assignment Reflection on Models, Decision Support, AI, and Bias}
+\subtitle{Synthesis of Assignment 1--3}
+\date{Date: \today}
+\advisor{Course: NDAB20010U Health Data and Interoperability}
+\fpimage{billeder/picture.png}
+
+\begin{document}
+
+\maketitle
+
+\onehalfspacing
+
+\begin{center}
+\def\arraystretch{1.5}
+\rowcolors{2}{black!5}{white}
+\begin{tabularx}{\textwidth}{l X}
+Institution: & University of Copenhagen, Faculty of Health and Medical Sciences \\
+Department: & Department of Public Health \\
+Program: & BSc in Health Informatics (6th semester) \\
+Course: & NDAB20010U Health Data and Interoperability \\
+Author: & Christian Kristensen \\
+KUID: & TDH522 \\
+Title and subtitle: & Assignment 4 \\
+Instructor(s): & Thomas Troels Hildebrandt (Course admin and teacher) \& Hubert Dariusz Zajac (Teacher) \\
+Exam format: & Written report \\
+Max pages (assignment brief): & Approx. 10 pages (3+3+3+1) \\
+Appendices: & Not included \\
+Date: & \today
+\end{tabularx}
+\end{center}
+
+\section*{AI Declaration}
+I declare that AI has only been used for grammatical correction.\\
+AI has \textbf{not} been used to generate content, reasoning, or structure.
+\newpage
+
+\tableofcontents
+\clearpage
+
+\input{opgaver/assignment4_reflection}
+
+\clearpage
+\printbibliography[heading=bibintoc,title={References}]
+
+\end{document}

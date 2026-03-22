@@ -1,0 +1,106 @@
+\ProvidesPackage{KUstyle}
+
+\RequirePackage{eso-pic}
+\RequirePackage{graphicx}
+\RequirePackage[absolute]{textpos}
+\RequirePackage{hyperref}
+
+\definecolor{KUrod}{RGB}{144,26,30}
+
+\newif\ifKU@logofileok
+\newread\KU@logoread
+\def\KU@logofile{KU-logo.pdf}
+\def\KU@lfspointer{version https://git-lfs.github.com/spec/v1}
+
+\newcommand*{\KU@checklogofile}{%
+    \KU@logofileokfalse
+    \IfFileExists{\KU@logofile}{%
+        \begingroup
+        \endlinechar=-1
+        \openin\KU@logoread=\KU@logofile
+        \read\KU@logoread to \KU@logofirstline
+        \closein\KU@logoread
+        \ifx\KU@logofirstline\KU@lfspointer
+            \global\KU@logofileokfalse
+        \else
+            \global\KU@logofileoktrue
+        \fi
+        \endgroup
+        \ifKU@logofileok\else
+            \PackageWarning{KUstyle}{KU-logo.pdf is a Git LFS pointer. Replace it with the actual PDF to enable the cover background}%
+        \fi
+    }{%
+        \PackageWarning{KUstyle}{KU-logo.pdf not found. Cover background omitted}%
+    }%
+}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\newcommand*{\advisor}[1]{\def\@advisor{#1}}
+\newcommand*{\ptype}[1]{\def\@ptype{#1}}
+\newcommand*{\subtitle}[1]{\def\@subtitle{#1}}
+\newcommand*{\fpimage}[1]{\def\@fpimage{#1}}
+
+\def\maketitle{
+    \thispagestyle{empty}
+    \KU@checklogofile
+    \ifKU@logofileok
+        \AddToShipoutPictureBG*{\includegraphics[width=\paperwidth,height=\paperheight]{\KU@logofile}}
+    \fi
+    \ 
+    
+    \ifdefined\@fpimage
+        \begin{textblock}{10}(1.5,4.7)
+        \ifx\@fpimage\KU@logofile
+            \ifKU@logofileok
+                \noindent\includegraphics*[width=\textwidth, height=80mm, keepaspectratio]{\@fpimage}
+            \else
+                \PackageWarning{KUstyle}{Frontpage image omitted because KU-logo.pdf is not a valid PDF}%
+            \fi
+        \else
+            \IfFileExists{\@fpimage}{%
+                \noindent\includegraphics*[width=\textwidth, height=80mm, keepaspectratio]{\@fpimage}%
+            }{%
+                \PackageWarning{KUstyle}{Frontpage image file not found. Image omitted}%
+            }%
+        \fi
+        \end{textblock}
+    \fi
+    
+    \begin{textblock}{10}(1.5,10.4) \noindent\fontsize{20}{20}\selectfont \textbf{\@ptype}
+    \end{textblock}
+    
+    \ifdefined\@subtitle
+        \begin{textblock}{10}(1.5,11.0) \noindent\fontsize{14}{14}\selectfont \@author
+        \end{textblock}
+    \fi
+
+    \ifdefined\@ptype
+        \begin{textblock}{13}(1.5,11.8)
+        {\hyphenpenalty=10000\exhyphenpenalty=10000\raggedright\fontsize{20}{24}\selectfont \textbf{\@title}\par}
+        \end{textblock}
+    \fi
+    
+    \begin{textblock}{13}(1.5,13.2)
+        \noindent\fontsize{14}{14}\selectfont \@subtitle
+    \end{textblock}
+    
+    \begin{textblock}{13}(1.5,14.0)
+    \noindent\fontsize{11}{11}\selectfont \@date 
+    \end{textblock}
+    
+    \ifdefined\@advisor
+        \begin{textblock}{13}(1.5,14.5)
+        \noindent\fontsize{11}{11}\selectfont \@advisor 
+        \end{textblock}
+    \fi
+    
+    \newpage
+    \noindent
+}

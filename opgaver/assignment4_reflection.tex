@@ -1,0 +1,247 @@
+\section{Process modellering}
+\label{sec:process_modellering}
+
+This section reflects on the modelling work in Assignment 1 and links it to later lessons from Assignment 2 and 3. The core progression is: first I learned how to encode requirements correctly, then I learned how strongly model validity depends on data quality and context, and finally I learned how to connect process models with coding/interoperability services. In other words, the modelling work evolved from \textit{syntactic correctness} toward \textit{socio-technical usefulness}.
+
+\subsection{Typer af modeller}
+\label{subsec:process_typer_modeller}
+
+Assignment 1 used two main process-model types for the same surgery and postsurgical-care case: declarative DCR models and procedural BPMN models. The two model families represent different abstractions of reality.
+
+DCR models express constraints (what must or must not happen) rather than a fixed full path. This made it possible to represent requirements compactly using condition, response, include/exclude, and timed constraints. BPMN, by contrast, represented control flow through gateways, sequence flow, loops, and timer nodes. This gave high visual clarity for a ``happy path,'' but required more structural elements when rules became complex (for example repeated checks, deadline behaviour, and decision loops). The distinction matches the declarative--procedural trade-off in the workflow literature: flexibility vs explicit control-path structure \parencite{vanderaalst2009declarativeworkflows,hildebrandt2026process}.
+
+However, both models are abstractions and therefore omit information by design. In Assignment 1, both DCR and BPMN captured formal constraints between activities, but omitted at least four clinically relevant layers:
+\begin{itemize}
+    \item informal coordination between professionals,
+    \item reasons behind deviations,
+    \item differences in local resource pressure,
+    \item ambiguity in requirement interpretation (for example ``5 days'' as minimum delay vs exact deadline).
+\end{itemize}
+
+This means that even when a model is formally correct relative to assignment text, it is still incomplete relative to lived practice. Assignment 2 made this limitation explicit: models built from interview data (work-as-imagined) differed from observed traces (work-as-done), and logs still differed from real practice (work-as-recorded) \parencite{guidehealthinformatics2026ch27,zajac2026methodsknowing}. Therefore, process models should be treated as purpose-built lenses, not objective mirrors.
+
+\subsection{Typer af beslutningsstøtte og AI}
+\label{subsec:process_beslutningsstoette_ai}
+
+In Assignment 1, decision support was not ``AI'' in a machine-learning sense, but it was still computational decision support in three forms:
+\begin{itemize}
+    \item \textbf{Constraint-based support:} the model enforces ``must happen before/after'' and ``only once'' logic.
+    \item \textbf{Temporal support:} timed conditions and timer events create deadline/waiting behaviour.
+    \item \textbf{Choice support:} modelled decision points (discharge vs extend care) make downstream process effects explicit.
+\end{itemize}
+
+The advantage is auditability. Every decision effect is traceable to explicit model elements. This is a strong quality for healthcare settings where accountability matters.
+
+The challenge is scope fragility: explicit rules support what is already formalized, but may fail for contextual exceptions that were not encoded. That weakness became clearer after Assignment 2, where invisible work and undocumented coordination were shown to be structurally important for patient flow and safety interpretation. A ``perfect'' process model can therefore still produce poor decision support if its input reality is under-captured.
+
+A key lesson across assignments is that model-based decision support works best when combined with governance and feedback loops. Assignment 3 operationalized this by combining formal process/decision models (DCR + DMN) with controlled coding support instead of full automation. The practical design principle is: use formal models to structure decisions, then keep humans accountable for exceptions and ambiguous cases.
+
+\subsection{Typer af bias}
+\label{subsec:process_bias}
+
+Several bias types can affect process-modelling work like Assignment 1:
+
+\textbf{Formalization bias.} What is easy to formalize tends to be over-represented. Measurable sequence constraints become central, while tacit judgement and coordination are under-modelled.
+
+\textbf{Interpretation bias.} Requirement text can be interpreted differently (for example timing semantics), and the chosen interpretation is then built into the model as if it were neutral truth.
+
+\textbf{Tool bias.} Modelling tools shape what the modeller notices. BPMN foregrounds explicit flow; DCR foregrounds constraint logic. Each viewpoint can hide weaknesses that the other notation would reveal.
+
+\textbf{Confirmation bias.} Once a model ``runs'' and looks consistent, there is risk of overconfidence that the represented process is complete.
+
+These biases can be mitigated with the methods learned across assignments:
+\begin{itemize}
+    \item state modelling assumptions explicitly,
+    \item validate with alternative traces/scenarios,
+    \item triangulate model logic with qualitative and log-based evidence,
+    \item include explicit review of what the model excludes.
+\end{itemize}
+
+In short, the most important anti-bias move is to treat process models as falsifiable hypotheses about work, not final truth.
+
+\clearpage
+
+\section{Assignment 2, Data quality}
+\label{sec:assignment2_data_quality}
+
+Assignment 2 introduced a stronger epistemic perspective: not only ``is the model correct,'' but ``what kind of reality does the data allow us to model at all?'' The main contribution was to connect data quality, modelling validity, and practical risk in a healthcare context.
+
+\subsection{Data sources as abstractions of reality}
+\label{subsec:a2_data_sources_abstractions}
+
+The four data sources used in Assignment 2 represented different abstraction layers of the same clinical world. They were complementary, but each source captured some phenomena and excluded others.
+
+\paragraph{Structured comparison of data abstractions}
+\begin{center}
+\small
+\setlength{\tabcolsep}{5pt}
+{\rowcolors{2}{black!6}{white}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.26\textwidth}>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{black!12}
+\textbf{Data type} & \textbf{Main phenomena captured} & \textbf{Main exclusions} & \textbf{Modelling implication} \\
+\midrule
+Interview transcripts & intentions, self-explanations, expected order & micro-variation, tacit adjustments, real-time pressures & strong for \textit{work-as-imagined}; weak for conformance realism \\
+Observation notes & situated behaviour, local adaptations, coordination episodes & internal reasoning, complete temporal precision & strong for discovering exceptions and hidden coordination \\
+Event logs & timestamps, case traces, actors/roles, measurable flow & motive, meaning, undocumented communication, off-system actions & strong for conformance and KPI analysis, weak for contextual causality \\
+Workflow diagram & intended macro-structure and formal handoffs & local variability, implementation drift, informal practices & strong normative frame, but not sufficient as empirical truth \\
+\bottomrule
+\end{tabularx}
+}
+\TableSource{Synthesis of Assignment 2 Part I and II results and reflection framework \parencite{guidehealthinformatics2026ch27,zajac2026methodsknowing}.}
+\end{center}
+
+This comparison shows that each source is a selective translation. Interviews are strong for ``why'' and planned structure, logs are strong for ``when'' and ``in which order,'' observation is strong for ``what actually happens under local constraints,'' and the workflow diagram is strong for system intent. None of them alone captures clinical work adequately.
+
+Therefore, each source both supports and limits process modelling. For example, event logs support reproducible performance analysis, but if they miss informal escalations, a model trained only on logs can understate safety-critical coordination. Conversely, interview narratives can overstate regularity and understate adaptation. The practical lesson from Assignment 2 is that modelling clinical work requires triangulation between \textit{knowledge-as-stated}, \textit{knowledge-as-discovered}, and \textit{knowledge-as-recorded}.
+
+\subsection{Risks of training healthcare AI on flawed, partial, or single-source data}
+\label{subsec:a2_risks_flawed_data}
+
+My data-quality assessment in Assignment 2 found concrete quality issues (for example high missingness in context fields, urgency/shift imbalance, timestamp credibility problems, and contamination by non-operational traces). These issues create direct AI risks.
+
+\textbf{Risk 1: Spurious learning and unstable performance claims.}
+If timestamps are affected by batch logging, measured turnaround-time patterns can reflect documentation behaviour rather than care delivery. In the assignment data, mean total TAT changed substantially after timestamp cleaning, showing that conclusions were highly sensitive to logging behaviour.
+
+\textbf{Risk 2: Safety distortion through denominator bias.}
+A single missing critical communication event is clinically serious even if aggregate conformance percentages look high. Training or evaluating AI on such data can hide safety-critical failure patterns.
+
+\textbf{Risk 3: Representativity bias and unfair generalization.}
+The log had skewed urgency/shift distributions. A model trained on such data can overfit common contexts and perform poorly in underrepresented clinical scenarios.
+
+\textbf{Risk 4: Source contamination.}
+The custom ``operational authenticity'' dimension showed that non-production/test-like traces can enter analysis. Even a small fraction of contaminated cases can degrade validity in downstream model development.
+
+\textbf{Risk 5: Automation amplification.}
+When flawed data are used for AI and then fed back into workflow decisions, errors can become self-reinforcing. What starts as documentation noise can become operational policy.
+
+These risks align with the five-facets framing: data, source, system, task, and human quality dimensions jointly determine whether a dataset is fit for AI use \parencite{mohammed2025fivefacets}. The key point is that ``large'' data is not equivalent to ``valid'' data.
+
+\subsection{Alignment and divergence between clinical and AI data needs}
+\label{subsec:a2_alignment_divergence}
+
+Healthcare data serves multiple purposes simultaneously: immediate patient care, legal/professional documentation, organizational management, research, and increasingly AI training. Some needs align naturally, while others diverge.
+
+\textbf{Where needs align.}
+Both clinicians and AI systems benefit from accurate identifiers, consistent timestamps, clear role attribution, and standardized coding structures. Interoperability standards and clear terminology governance improve both bedside continuity and secondary analytics \parencite{benson2016principles,hildebrandt2026process}.
+
+\textbf{Where needs diverge.}
+Clinical documentation is primarily written for safe patient care and professional communication, not for machine learning optimization. AI pipelines often need stricter normalization, denser labels, and broader contextual metadata than clinicians can reasonably provide during care.
+
+This divergence has three consequences:
+\begin{itemize}
+    \item \textbf{Documentation burden risk:} if systems optimize too strongly for AI-readiness, they can increase clinician workload.
+    \item \textbf{Practice distortion risk:} staff may document ``for the system'' instead of for clinical reasoning.
+    \item \textbf{Design governance requirement:} system design must separate mandatory care documentation from optional analytics enrichment, with clear purpose boundaries.
+\end{itemize}
+
+A robust design approach is to keep core clinical documentation minimal and meaningful, then add selective structured metadata at high-value points (for example escalation/handoff events), as proposed in Assignment 2. This keeps the system clinically usable while improving AI and research utility.
+
+\clearpage
+
+\section{Kodning og interoperabilitet}
+\label{sec:kodning_interoperabilitet}
+
+Assignment 3 shifted the focus from process discovery toward coded data, semantic interoperability, and practical decision support implementation. The strongest learning point was that coding support is useful only when combined with traceability, governance, and human control.
+
+\subsection{Typer af modeller}
+\label{subsec:kodning_typer_modeller}
+
+At least four model types were present in Assignment 3:
+\begin{itemize}
+    \item \textbf{Classification models} (ICD-10/ICD-11): hierarchical abstractions for reporting and comparability.
+    \item \textbf{Terminology model assumptions} (concept-level semantics and mapping logic): needed when translating free text into standardized codes.
+    \item \textbf{Decision models} (DMN table): explicit rule mapping from dosage phrase to standardized dosage category.
+    \item \textbf{Process/interaction models} (DCR with external service call): orchestration of data input, transformation, lookup, and output.
+\end{itemize}
+
+Each model type abstracts differently. ICD abstracts rich clinical narratives into bounded classes; DMN abstracts linguistic variation into finite rules; DCR abstracts operational logic into constraints and activity effects.
+
+The omission risk is therefore model-specific:
+\begin{itemize}
+    \item ICD omits contextual nuance not represented in chosen classes.
+    \item DMN omits expressions not pre-enumerated in rules.
+    \item DCR omits clinical meaning unless inputs and validation steps are well designed.
+\end{itemize}
+
+The comparison task in Assignment 3 (WHO tools, ICDPedia, and ChatGPT) showed this clearly: internally stable outputs are possible even when cross-tool correctness differs (for example the sudden hearing loss discrepancy between WHO ICD-11 lookup and ChatGPT suggestion). So model stability must not be confused with semantic correctness \parencite{who2019icd10browser,who2024icd11codingtool,coiera2015ch23}.
+
+\subsection{Typer af beslutningsstøtte og AI}
+\label{subsec:kodning_beslutningsstoette_ai}
+
+Assignment 3 involved a spectrum of decision support mechanisms:
+\begin{enumerate}
+    \item \textbf{Lookup support} (ICD browser tools): human-led, standard-authoritative search.
+    \item \textbf{Rule-based support} (DMN dosage mapping): deterministic transformation for known phrases.
+    \item \textbf{Service-based support} (ICD-11 API in DCR): machine retrieval of candidate code from structured query.
+    \item \textbf{LLM-based support} (ChatGPT): probabilistic candidate generation and terminology reformulation.
+\end{enumerate}
+
+Advantages and challenges differ by support type:
+
+\textbf{Lookup tools} are authoritative and auditable, but slower in high-throughput settings.
+
+\textbf{DMN and service integration} are transparent and fast for constrained patterns, but brittle outside covered input space.
+
+\textbf{LLM support} is fast and linguistically flexible, but introduces epistemic risk: fluent outputs may be wrong, and users may over-trust confident wording.
+
+The strongest cross-assignment recommendation is therefore a layered architecture:
+\begin{itemize}
+    \item use LLMs for draft candidate generation,
+    \item validate in official coding tools,
+    \item finalize inside governed human-in-the-loop workflows.
+\end{itemize}
+
+This aligns with WHO guidance and empirical coding studies: AI assistance can improve productivity, but autonomous clinical coding is not a defensible default \parencite{who2023safeethicalai,who2021ethicsai,teixeira2024chatgpticd10,abdelgadir2024nephrologychatgpt,ahima2023chatgptroles}.
+
+\subsection{Typer af bias}
+\label{subsec:kodning_bias}
+
+In coding/interoperability tasks, bias appears at multiple levels:
+
+\textbf{Terminology bias.} Input wording can anchor the coding path. The assignment term ``heart attack (hjertestop)'' mixes potentially different clinical concepts, creating systematic ambiguity risk.
+
+\textbf{Language bias.} Danish/English phrasing differences and local terminology conventions can shift candidate code retrieval.
+
+\textbf{Automation bias.} Users may accept first machine suggestions too quickly, especially when outputs appear stable across repeated runs.
+
+\textbf{Interface/ranking bias.} Search tool ordering and autocomplete suggestions can steer users toward specific coding choices.
+
+\textbf{Coverage bias.} Rule tables and service mappings cover known terms better than edge cases, creating uneven support quality.
+
+Mitigation should therefore combine technical and organizational controls:
+\begin{itemize}
+    \item explicit ambiguity handling rules,
+    \item mandatory source-of-truth validation (WHO tools/local standards),
+    \item provenance logging of suggestion vs final selected code,
+    \item periodic audit of divergence patterns between assistive tools and validated coding outcomes.
+\end{itemize}
+
+The broader lesson is that bias management is not a one-time model property; it is a continuous governance process.
+
+\clearpage
+
+\section{Konklusion}
+\label{sec:konklusion}
+
+Across Assignment 1--3, the most useful model and decision-support pattern is a \textbf{hybrid, governed approach} rather than any single method used in isolation.
+
+\textbf{Most useful:}
+\begin{itemize}
+    \item DCR-style constraint modelling for flexible but auditable process control,
+    \item selective BPMN-style explicit flows when linear accountability and communication clarity are primary,
+    \item triangulated evidence (interview + observation + logs) for model validity,
+    \item human-in-the-loop coding support where AI proposes and official tools validate.
+\end{itemize}
+
+\textbf{Less useful when used alone:}
+\begin{itemize}
+    \item single-source process models derived only from logs,
+    \item ungoverned automated coding suggestions,
+    \item formally correct models with no explicit treatment of omitted context.
+\end{itemize}
+
+If I summarize the progression in one sentence, it is this: Assignment 1 taught me how to model rules; Assignment 2 taught me why model validity depends on data and context; Assignment 3 taught me how to operationalize coding/interoperability support responsibly.
+
+Therefore, the final recommendation is pragmatic: in healthcare informatics, useful decision support is not ``maximum automation,'' but \textbf{traceable automation under human accountability}, grounded in high-quality, purpose-aware data and explicit modelling assumptions.

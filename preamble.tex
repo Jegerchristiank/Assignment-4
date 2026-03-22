@@ -1,0 +1,158 @@
+% Common packages and configuration for the KU thesis template
+\PassOptionsToPackage{table}{xcolor}
+\usepackage{xcolor}
+\usepackage{KUstyle}
+\usepackage{xurl}
+\usepackage[normalem]{ulem}
+\definecolor{linkblue}{HTML}{0563C1}
+\hypersetup{
+  breaklinks=true,
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=linkblue,
+  filecolor=linkblue
+}
+\newcommand{\markedhref}[2]{\href{#1}{\textcolor{linkblue}{\uline{#2}}}}
+\usepackage[a4paper,margin=0.8in]{geometry}
+\usepackage{fontspec}
+\usepackage[english]{babel}
+\usepackage{setspace}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{mdframed}
+\usepackage{fvextra}
+\usepackage{listings}
+\usepackage{booktabs} % Consistent table rules for evidence tables.
+\usepackage{csquotes}
+
+% Package decisions:
+% - siunitx: used for numeric examples/units.
+% - longtable: add only if a table must span multiple pages.
+
+% Label conventions:
+% sec:, subsec:, fig:, tab:, eq:, app:
+
+% Main font configuration
+\setmainfont{Arial}
+
+% Reduce aggressive hyphenation to avoid hard word breaks in output.
+\hyphenpenalty=800
+\exhyphenpenalty=800
+\emergencystretch=3em
+
+% Numeric and unit formatting (Danish decimal comma).
+\sisetup{
+  output-decimal-marker = {,},
+  group-separator = {.},
+  group-minimum-digits = 4
+}
+
+% Table/figure source and note helpers (use below floats).
+\newcommand{\TableSource}[1]{\par{\small\textit{Source: #1}}}
+\newcommand{\TableNote}[1]{\par{\small\textit{Note: #1}}}
+\newcommand{\FigureSource}[1]{\par{\small\textit{Source: #1}}}
+
+% Code style for appendix snippets (VS Code-like syntax highlighting).
+\definecolor{codebg}{HTML}{F6F8FA}
+\definecolor{codeframe}{HTML}{D0D7DE}
+\definecolor{codekw}{HTML}{0550AE}
+\definecolor{codestr}{HTML}{0A3069}
+\definecolor{codecom}{HTML}{116329}
+\definecolor{codenum}{HTML}{57606A}
+
+\lstdefinestyle{pycode}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{codekw}\bfseries,
+  commentstyle=\color{codecom}\itshape,
+  stringstyle=\color{codestr},
+  numberstyle=\scriptsize\color{codenum},
+  numbers=left,
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=false,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{codeframe},
+  framerule=0.4pt,
+  xleftmargin=0.8em,
+  framexleftmargin=0.6em,
+  tabsize=2,
+  keepspaces=true,
+  columns=fullflexible,
+  upquote=true
+}
+
+% Table standard: caption above (label after caption), booktabs rules, source/note below tabular.
+% Figure standard: PDF/PNG preferred, 300 dpi for raster, caption+label, source below.
+
+% Bibliography setup (Harvard author-date baseline with consistent web formatting).
+\usepackage[
+  backend=biber,
+  style=authoryear,
+  sorting=nyt,
+  maxcitenames=2,
+  maxbibnames=99,
+  giveninits=true,
+  uniquename=init,
+  date=year,
+  urldate=iso,
+  seconds=true
+]{biblatex}
+\addbibresource{references.bib}
+\AtBeginBibliography{\sloppy}
+\DeclareFieldFormat{url}{Available at\addcolon\space\url{#1}}
+\DefineBibliographyStrings{english}{urlseen = {Accessed\addcolon}}
+
+% Short-form parenthetical citations for selected institutional authors.
+\DeclareCiteCommand{\parenciteshort}
+  {\bibopenparen\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \printtext[bibhyperref]{%
+     \ifnameundef{shortauthor}{\printnames{labelname}}{\printnames{shortauthor}}%
+     \setunit{\nameyeardelim}%
+     \printlabeldate}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}\bibcloseparen}
+
+% Full-name narrative citations for institutional sources with shortauthor.
+\DeclareCiteCommand{\textcitefull}
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \printtext[bibhyperref]{%
+     \printnames{author}\setunit{\nameyeardelim}\printtext[parens]{\printlabeldate}}}
+  {\multicitedelim}
+  {\usebibmacro{postnote}}
+
+% Customisation of default names
+\renewcommand{\contentsname}{Contents}
+
+% Legal reference helpers.
+\newcommand{\lawpar}[1]{\S~#1}
+\newcommand{\lawart}[1]{art.~#1}
+
+% Quote styling: make display quotes visually distinct and attributable.
+\newmdenv[
+  leftline=true,
+  rightline=false,
+  topline=false,
+  bottomline=false,
+  linecolor=KUrod,
+  linewidth=2pt,
+  backgroundcolor=black!5,
+  skipabove=\baselineskip,
+  skipbelow=\baselineskip,
+  innerleftmargin=0.8em,
+  innerrightmargin=0.8em,
+  innertopmargin=0.6em,
+  innerbottommargin=0.6em
+]{quoteblock}
+
+\newcommand{\quoteattrib}[1]{\par\hfill--- \normalfont #1}
+
+\renewenvironment{displayquote}{\begin{quoteblock}\small\itshape}{\end{quoteblock}}
